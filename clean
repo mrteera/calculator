@@ -1,0 +1,3 @@
+#!/bin/bash
+
+rm -f Lexer.class Lexer.java* Main.class parser* sym.class sym.java
