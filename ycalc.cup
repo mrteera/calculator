@@ -1,10 +1,5 @@
-/*
-  $ java java_cup.Main < ycalc.cup
-*/
-   
-   
+/* $ java java_cup.Main < ycalc.cup */
 /* ----------------------Preliminary Declarations Section--------------------*/
-   
 /* Import the class java_cup.runtime.*  */
 import java_cup.runtime.*;
    
@@ -73,7 +68,7 @@ parser code {:
    Terminals that have no value are listed first and then terminals
    that do have an value, in this case an integer value, are listed on
    the next line down. */
-terminal           SEMI, PLUS, MINUS, TIMES, DIVIDE, LPAREN, RPAREN;
+terminal           INF, SEMI, PLUS, MINUS, TIMES, DIVIDE, LPAREN, RPAREN;
 terminal Integer   NUMBER, ID;
    
 /* Non terminals used in the grammar section.  
@@ -108,7 +103,9 @@ non terminal Integer    expr, factor, term;
    
    expr_list ::=   expr_list expr_part
                  | expr_part
-   expr_part ::=   expr SEMI
+                 | expr_pos
+   expr_part ::=   INF expr SEMI
+   expr_pos  ::=   POS expr SEMI
    expr      ::=   expr PLUS factor
                  | expr MINUS factor
                  | factor
@@ -119,7 +116,6 @@ non terminal Integer    expr, factor, term;
                  | NUMBER
                  | ID     
 */
-   
 /* 'expr_list' is the start of our grammar.  It can lead to another
    'expr_list' followed by an 'expr_part' or it can just lead to an
    'expr_part'.  The lhs of the non terminals 'expr_list' and
@@ -148,8 +144,8 @@ non terminal Integer    expr, factor, term;
    going through the grammar and don't encounter any more non
    terminals in the rhs productions will return until we get back to
    'expr' and at that point 'expr' will contain an integer value. */
-   
-   expr_part ::= expr:e
+
+   expr_part ::= INF expr:e
                  {: System.out.println(" = " + e); :}
                  SEMI
                  ;
@@ -215,7 +211,4 @@ non terminal Integer    expr, factor, term;
                  |
                  NUMBER:n
                  {: RESULT = n; :}
-                 |
-                 ID:i
-                 {: RESULT = i; :}
                  ;
