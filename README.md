@@ -3,7 +3,7 @@
 To compile and run:
 
 ```
-./run
+make all
 ```
 
 ## Files in src
