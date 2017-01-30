@@ -75,7 +75,9 @@ dec_int_lit = 0 | [1-9][0-9]*
 /* A identifier integer is a word beginning a letter between A and
    Z, a and z, or an underscore followed by zero or more letters
    between A and Z, a and z, zero and nine, or an underscore. */
+
 inf = [I][N][F]
+pos = [P][O][S]
    
 %%
 /* ------------------------Lexical Rules Section---------------------- */
@@ -93,6 +95,7 @@ inf = [I][N][F]
    
     /* Return the token SEMI declared in the class sym that was found. */
     {inf}              { return symbol(sym.INF); }
+    {pos}              { return symbol(sym.POS); }
     ";"                { return symbol(sym.SEMI); }
    
     /* Print the token found that was declared in the class sym and then

@@ -68,7 +68,7 @@ parser code {:
    Terminals that have no value are listed first and then terminals
    that do have an value, in this case an integer value, are listed on
    the next line down. */
-terminal           INF, SEMI, PLUS, MINUS, TIMES, DIVIDE, LPAREN, RPAREN;
+terminal           INF, POS, SEMI, PLUS, MINUS, TIMES, DIVIDE, LPAREN, RPAREN;
 terminal Integer   NUMBER, ID;
    
 /* Non terminals used in the grammar section.  
@@ -78,7 +78,7 @@ terminal Integer   NUMBER, ID;
    value means that it can be any type, it isn't set to a specific
    type.  So it could be an Integer or a String or whatever. */
 non terminal Object     expr_list, expr_part;
-non terminal Integer    expr, factor, term;
+non terminal Integer    expr, expr_pos, factor, term;
    
 
 /* -------------Precedence and Associatively of Terminals Section----------- */
@@ -148,6 +148,10 @@ non terminal Integer    expr, factor, term;
    expr_part ::= INF expr:e
                  {: System.out.println(" = " + e); :}
                  SEMI
+                 |
+                 POS expr_pos:e
+                 {: System.out.println(" = " + e); :}
+                 SEMI
                  ;
    
 /* 'expr' can lead to 'expr PLUS factor', 'expr MINUS factor', or
@@ -170,6 +174,16 @@ non terminal Integer    expr, factor, term;
                  {: RESULT = new Integer(e.intValue() + f.intValue()); :}
                  |
                  expr:e MINUS factor:f
+                 {: RESULT = new Integer(e.intValue() - f.intValue()); :}
+                 |
+                 factor:f
+                 {: RESULT = new Integer(f.intValue()); :}
+                 ;
+
+   expr_pos      ::= expr:e factor:f PLUS
+                 {: RESULT = new Integer(e.intValue() + f.intValue()); :}
+                 |
+                 expr:e factor:f MINUS
                  {: RESULT = new Integer(e.intValue() - f.intValue()); :}
                  |
                  factor:f
