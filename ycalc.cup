@@ -1,18 +1,5 @@
 /*
-  This example comes from a short article series in the Linux 
-  Gazette by Richard A. Sevenich and Christopher Lopes, titled
-  "Compiler Construction Tools". The article series starts at
-
-  http://www.linuxgazette.com/issue39/sevenich.html
-
-  Small changes and updates to newest JFlex+Cup versions 
-  by Gerwin Klein
-*/
-
-/*
-  Commented By: Christopher Lopes
-  File Name: ycalc.cup
-  To Create: > java java_cup.Main < ycalc.cup
+  $ java java_cup.Main < ycalc.cup
 */
    
    
