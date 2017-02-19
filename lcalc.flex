@@ -92,12 +92,12 @@ num = {dec_int_lit}("."[0-9]+)?
 <YYINITIAL> {
     /* Print the token found that was declared in the class sym and then
        return it. */
-    "+"                { System.out.print(" + "); return symbol(sym.PLUS); }
-    "-"                { System.out.print(" - "); return symbol(sym.MINUS); }
-    "*"                { System.out.print(" * "); return symbol(sym.TIMES); }
-    "/"                { System.out.print(" / "); return symbol(sym.DIVIDE); }
-    "("                { System.out.print(" ( "); return symbol(sym.LPAREN); }
-    ")"                { System.out.print(" ) "); return symbol(sym.RPAREN); }
+    "+"                { System.out.print("+ "); return symbol(sym.PLUS); }
+    "-"                { System.out.print("- "); return symbol(sym.MINUS); }
+    "*"                { System.out.print("* "); return symbol(sym.TIMES); }
+    "/"                { System.out.print("/ "); return symbol(sym.DIVIDE); }
+    "("                { System.out.print("( "); return symbol(sym.LPAREN); }
+    ")"                { System.out.print(") "); return symbol(sym.RPAREN); }
    
     /* If an integer is found print it out, return the token NUMBER
        that represents an integer and the value of the integer that is
@@ -106,7 +106,7 @@ num = {dec_int_lit}("."[0-9]+)?
     /*{dec_int_lit}      { System.out.print(yytext());
                          return symbol(sym.NUMBER, new Integer(yytext())); }*/
 
-    {num}      { System.out.print(yytext());
+    {num}      { System.out.print(yytext()+' ');
                return symbol(sym.NUMBER, new Double(yytext())); }
    
     /* Don't do anything if whitespace is found */

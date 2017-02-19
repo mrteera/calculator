@@ -111,6 +111,7 @@ program ::= infix_expr:e {: System.out.println("= " + e.getValue());
               System.out.println("Infix: " + e.getInfExp());
               System.out.println("Prefix: " + e.getPrefExp()); :};
 
+// Infix calculator
 infix_expr    ::= infix_expr:e PLUS infix_term:t
                 {: Token token = new Token();
                    token.setValue(e.getValue() + t.getValue());
@@ -147,5 +148,40 @@ infix_factor    ::= LPAREN infix_expr:e RPAREN
                 {: Token token = new Token();
                    token.setValue(num);
                    token.setPrefExp(num.toString());
+                    token.setPosExp(num.toString());
+                    RESULT = token; :};
+
+// Prefix calculator
+prefix_expr    ::= PLUS prefix_factor:f prefix_factor:f2
+                {: Token token = new Token();
+                   token.setValue(f.getValue() + f2.getValue());
+                   token.setInfExp("(" + f.getInfExp() + " + " + f2.getInfExp() + ")");
+                   token.setPosExp(f.getPosExp() + " " + f2.getPosExp() + " +");
+                    RESULT = token; :}
+            | MINUS prefix_factor:f prefix_factor:f2
+                {: Token token = new Token();
+                   token.setValue(f.getValue() - f2.getValue());
+                   token.setInfExp(f.getInfExp() + " - " + f2.getInfExp());
+                   token.setPosExp(f.getPosExp() + " " + f2.getPosExp() + " -");
+                    RESULT = token; :}
+            | TIMES prefix_factor:f prefix_factor:f2
+                {: Token token = new Token();
+                   token.setValue(f.getValue() * f2.getValue());
+                   token.setInfExp(f.getInfExp() + " * " + f2.getInfExp());
+                   token.setPosExp(f.getPosExp() + " " + f2.getPosExp() + " *");
+                    RESULT = token; :}
+            | DIVIDE prefix_factor:f prefix_factor:f2
+                {: Token token = new Token();
+                   token.setValue(f.getValue() / f2.getValue());
+                   token.setInfExp(f.getInfExp() + " / " + f2.getInfExp());
+                   token.setPosExp(f.getPosExp() + " " + f2.getPosExp() + " /");
+                    RESULT = token; :};
+
+prefix_factor    ::= prefix_expr:e
+                {: RESULT = e; :}
+            | NUMBER:num
+                {: Token token = new Token();
+                   token.setValue(num);
+                   token.setInfExp(num.toString());
                     token.setPosExp(num.toString());
                     RESULT = token; :};
