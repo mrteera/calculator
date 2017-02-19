@@ -78,8 +78,9 @@ terminal Double        NUMBER;
    value means that it can be any type, it isn't set to a specific
    type.  So it could be an Integer or a String or whatever. */
 non terminal            program;
-non terminal Token      infix, prefix, postfix;
 non terminal Token      infix_expr, infix_factor, infix_term;
+non terminal Token      prefix_expr, prefix_factor, prefix_term;
+non terminal Token      postfix_expr, postfix_factor, postfix_term;
    
 
 /* -------------Precedence and Associatively of Terminals Section----------- */
@@ -100,12 +101,16 @@ non terminal Token      infix_expr, infix_factor, infix_term;
 
 /* ----------------------------Grammar Section-------------------- */
 
-program ::= infix:i {: System.out.println("= " + i.getValue());
-              System.out.println("Prefix: " + i.getPrefExp());
-                System.out.println("Postfix: " + i.getPosExp()); :};
+program ::= infix_expr:e {: System.out.println("= " + e.getValue());
+              System.out.println("Prefix: " + e.getPrefExp());
+                System.out.println("Postfix: " + e.getPosExp()); :}
+            | prefix_expr:e {: System.out.println("= " + e.getValue()); 
+              System.out.println("Infix: " + e.getInfExp());
+              System.out.println("Postfix: " + e.getPosExp()); :}
+            | postfix_expr:e {: System.out.println("= " + e.getValue()); 
+              System.out.println("Infix: " + e.getInfExp());
+              System.out.println("Prefix: " + e.getPrefExp()); :};
 
-infix ::= infix_expr:e {: RESULT = e; :};
-   
 infix_expr    ::= infix_expr:e PLUS infix_term:t
                 {: Token token = new Token();
                    token.setValue(e.getValue() + t.getValue());

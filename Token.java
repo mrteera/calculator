@@ -8,6 +8,7 @@ public class Token {
     private Double value;
     private String prefExp;
     private String posExp;
+    private String infExp;
 
     public Double getValue() {
         return value;
@@ -15,6 +16,14 @@ public class Token {
 
     public void setValue(Double value) {
         this.value = value;
+    }
+
+    public String getInfExp() {
+        return infExp;
+    }
+
+    public void setInfExp(String infExp) {
+        this.infExp = infExp;
     }
 
     public String getPrefExp() {
