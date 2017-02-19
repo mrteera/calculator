@@ -79,8 +79,8 @@ terminal Double        NUMBER;
    type.  So it could be an Integer or a String or whatever. */
 non terminal            program;
 non terminal Token      infix_expr, infix_factor, infix_term;
-non terminal Token      prefix_expr, prefix_factor, prefix_term;
-non terminal Token      postfix_expr, postfix_factor, postfix_term;
+non terminal Token      prefix_expr, prefix_factor;
+non terminal Token      postfix_expr, postfix_factor;
    
 
 /* -------------Precedence and Associatively of Terminals Section----------- */
@@ -184,4 +184,39 @@ prefix_factor    ::= prefix_expr:e
                    token.setValue(num);
                    token.setInfExp(num.toString());
                     token.setPosExp(num.toString());
+                    RESULT = token; :};
+
+// Postfix calculator
+postfix_expr    ::= postfix_factor:f postfix_factor:f2 PLUS
+                {: Token token = new Token();
+                   token.setValue(f.getValue() + f2.getValue());
+                   token.setInfExp("(" + f.getInfExp() + " + " + f2.getInfExp() + ")");
+                   token.setPrefExp("+ " + f.getPrefExp() + " " + f2.getPrefExp());
+                    RESULT = token; :}
+            | postfix_factor:f postfix_factor:f2 MINUS
+                {: Token token = new Token();
+                   token.setValue(f.getValue() - f2.getValue());
+                   token.setInfExp(f.getInfExp() + " - " + f2.getInfExp());
+                   token.setPrefExp("- " + f.getPrefExp() + " " + f2.getPrefExp());
+                    RESULT = token; :}
+            | postfix_factor:f postfix_factor:f2 TIMES
+                {: Token token = new Token();
+                   token.setValue(f.getValue() * f2.getValue());
+                   token.setInfExp(f.getInfExp() + " * " + f2.getInfExp());
+                   token.setPrefExp("* " + f.getPrefExp() + " " + f2.getPrefExp());
+                    RESULT = token; :}
+            | postfix_factor:f postfix_factor:f2 DIVIDE
+                {: Token token = new Token();
+                   token.setValue(f.getValue() / f2.getValue());
+                   token.setInfExp(f.getInfExp() + " / " + f2.getInfExp());
+                   token.setPrefExp("/ " + f.getPrefExp() + " " + f2.getPrefExp());
+                    RESULT = token; :};
+
+postfix_factor    ::= postfix_expr:e
+                {: RESULT = e; :}
+            | NUMBER:num
+                {: Token token = new Token();
+                   token.setValue(num);
+                   token.setInfExp(num.toString());
+                    token.setPrefExp(num.toString());
                     RESULT = token; :};
