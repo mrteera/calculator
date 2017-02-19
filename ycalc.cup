@@ -117,7 +117,13 @@ program ::= infix_expr:e {:
           } else {
             System.out.println("= " + e.getValue()); 
           }
-          System.out.println("Infix: " + e.getInfExp());
+          String infix = e.getInfExp();
+          String firstLetter = infix.substring(0, 1);
+          String lastLetter = infix.substring(infix.length() - 1);
+          if (firstLetter.equals("(") && lastLetter.equals(")")) {
+            infix = infix.substring(1, infix.length() - 1);
+          }
+          System.out.println("Infix: " + infix);
           System.out.println("Postfix: " + e.getPosExp()); 
         :}
         | postfix_expr:e {: 
@@ -126,7 +132,13 @@ program ::= infix_expr:e {:
           } else {
             System.out.println("= " + e.getValue()); 
           }
-          System.out.println("Infix: " + e.getInfExp());
+          String infix = e.getInfExp();
+          String firstLetter = infix.substring(0, 1);
+          String lastLetter = infix.substring(infix.length() - 1);
+          if (firstLetter.equals("(") && lastLetter.equals(")")) {
+            infix = infix.substring(1, infix.length() - 1);
+          }
+          System.out.println("Infix: " + infix);
           System.out.println("Prefix: " + e.getPrefExp());
         :};
 
@@ -184,7 +196,7 @@ prefix_expr    ::= PLUS prefix_factor:f prefix_factor:f2
             | MINUS prefix_factor:f prefix_factor:f2
                 {: Token token = new Token();
                    token.setValue(f.getValue().subtract(f2.getValue()));
-                   token.setInfExp(f.getInfExp() + " - " + f2.getInfExp());
+                   token.setInfExp("(" + f.getInfExp() + " - " + f2.getInfExp() + ")");
                    token.setPosExp(f.getPosExp() + " " + f2.getPosExp() + " -");
                     RESULT = token; :}
             | TIMES prefix_factor:f prefix_factor:f2
@@ -219,7 +231,7 @@ postfix_expr    ::= postfix_factor:f postfix_factor:f2 PLUS
             | postfix_factor:f postfix_factor:f2 MINUS
                 {: Token token = new Token();
                    token.setValue(f.getValue().subtract(f2.getValue()));
-                   token.setInfExp(f.getInfExp() + " - " + f2.getInfExp());
+                   token.setInfExp("(" + f.getInfExp() + " - " + f2.getInfExp() + ")");
                    token.setPrefExp("- " + f.getPrefExp() + " " + f2.getPrefExp());
                     RESULT = token; :}
             | postfix_factor:f postfix_factor:f2 TIMES
