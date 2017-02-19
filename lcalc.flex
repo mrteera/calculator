@@ -72,7 +72,7 @@ WhiteSpace     = {LineTerminator} | [ \t\f]
    one and nine followed by zero or more numbers between zero and nine
    or just a zero.  */
 dec_int_lit = 0 | [1-9][0-9]*
-num = {dec_int_lit}("."[0-9]+)?
+num = (-)?{dec_int_lit}("."[0-9]+)?
    
 /* A identifier integer is a word beginning a letter between A and
    Z, a and z, or an underscore followed by zero or more letters
