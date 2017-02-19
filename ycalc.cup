@@ -101,15 +101,33 @@ non terminal Token      postfix_expr, postfix_factor;
 
 /* ----------------------------Grammar Section-------------------- */
 
-program ::= infix_expr:e {: System.out.println("= " + e.getValue());
-              System.out.println("Prefix: " + e.getPrefExp());
-                System.out.println("Postfix: " + e.getPosExp()); :}
-            | prefix_expr:e {: System.out.println("= " + e.getValue()); 
-              System.out.println("Infix: " + e.getInfExp());
-              System.out.println("Postfix: " + e.getPosExp()); :}
-            | postfix_expr:e {: System.out.println("= " + e.getValue()); 
-              System.out.println("Infix: " + e.getInfExp());
-              System.out.println("Prefix: " + e.getPrefExp()); :};
+program ::= infix_expr:e {: 
+          if(e.getValue() == Double.POSITIVE_INFINITY | e.getValue() == Double.NEGATIVE_INFINITY) {
+            System.out.println(": Error divided by zero");
+          } else {
+            System.out.println("= " + e.getValue());
+          }
+          System.out.println("Prefix: " + e.getPrefExp());
+          System.out.println("Postfix: " + e.getPosExp()); 
+        :}
+        | prefix_expr:e {:
+          if(e.getValue() == Double.POSITIVE_INFINITY | e.getValue() == Double.NEGATIVE_INFINITY) {
+            System.out.println(": Error divided by zero");
+          } else {
+            System.out.println("= " + e.getValue()); 
+          }
+          System.out.println("Infix: " + e.getInfExp());
+          System.out.println("Postfix: " + e.getPosExp()); 
+        :}
+        | postfix_expr:e {: 
+          if(e.getValue() == Double.POSITIVE_INFINITY | e.getValue() == Double.NEGATIVE_INFINITY) {
+            System.out.println(": Error divided by zero");
+          } else {
+            System.out.println("= " + e.getValue()); 
+          }
+          System.out.println("Infix: " + e.getInfExp());
+          System.out.println("Prefix: " + e.getPrefExp());
+        :};
 
 // Infix calculator
 infix_expr    ::= infix_expr:e PLUS infix_term:t
@@ -135,7 +153,7 @@ infix_term    ::= infix_term:t TIMES infix_factor:f
                     RESULT = token; :}
             | infix_term:t DIVIDE infix_factor:f
                 {: Token token = new Token();
-                   token.setValue(t.getValue() * f.getValue());
+                   token.setValue(t.getValue() / f.getValue());
                    token.setPrefExp("/ " + t.getPrefExp() + " " + f.getPrefExp());
                    token.setPosExp(t.getPosExp() + " " + f.getPosExp() + " /");
                     RESULT = token; :}
