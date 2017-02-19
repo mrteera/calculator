@@ -71,13 +71,11 @@ WhiteSpace     = {LineTerminator} | [ \t\f]
    one and nine followed by zero or more numbers between zero and nine
    or just a zero.  */
 dec_int_lit = 0 | [1-9][0-9]*
+num = {dec_int_lit}("."[0-9]+)?
    
 /* A identifier integer is a word beginning a letter between A and
    Z, a and z, or an underscore followed by zero or more letters
    between A and Z, a and z, zero and nine, or an underscore. */
-
-inf = [I][N][F]
-pos = [P][O][S]
    
 %%
 /* ------------------------Lexical Rules Section---------------------- */
@@ -92,12 +90,6 @@ pos = [P][O][S]
    the start state YYINITIAL. */
 
 <YYINITIAL> {
-   
-    /* Return the token SEMI declared in the class sym that was found. */
-    {inf}              { return symbol(sym.INF); }
-    {pos}              { return symbol(sym.POS); }
-    ";"                { return symbol(sym.SEMI); }
-   
     /* Print the token found that was declared in the class sym and then
        return it. */
     "+"                { System.out.print(" + "); return symbol(sym.PLUS); }
@@ -111,8 +103,11 @@ pos = [P][O][S]
        that represents an integer and the value of the integer that is
        held in the string yytext which will get turned into an integer
        before returning */
-    {dec_int_lit}      { System.out.print(yytext());
-                         return symbol(sym.NUMBER, new Integer(yytext())); }
+    /*{dec_int_lit}      { System.out.print(yytext());
+                         return symbol(sym.NUMBER, new Integer(yytext())); }*/
+
+    {num}      { System.out.print(yytext());
+               return symbol(sym.NUMBER, new Double(yytext())); }
    
     /* Don't do anything if whitespace is found */
     {WhiteSpace}       { /* just skip what was found, do nothing */ }   
