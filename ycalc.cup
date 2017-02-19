@@ -2,6 +2,7 @@
 /* ----------------------Preliminary Declarations Section--------------------*/
 /* Import the class java_cup.runtime.*  */
 import java_cup.runtime.*;
+import java.math.BigDecimal;
    
 /* Parser code to change the way the parser reports errors (include
    line and column number of the error). */
@@ -69,7 +70,7 @@ parser code {:
    that do have an value, in this case an integer value, are listed on
    the next line down. */
 terminal                PLUS, MINUS, TIMES, DIVIDE, LPAREN, RPAREN;
-terminal Double        NUMBER;
+terminal BigDecimal        NUMBER;
    
 /* Non terminals used in the grammar section.  
 
@@ -102,7 +103,7 @@ non terminal Token      postfix_expr, postfix_factor;
 /* ----------------------------Grammar Section-------------------- */
 
 program ::= infix_expr:e {: 
-          if(e.getValue() == Double.POSITIVE_INFINITY | e.getValue() == Double.NEGATIVE_INFINITY) {
+          if(e.getValue() == null) {
             System.out.println(": Error divided by zero");
           } else {
             System.out.println("= " + e.getValue());
@@ -111,7 +112,7 @@ program ::= infix_expr:e {:
           System.out.println("Postfix: " + e.getPosExp()); 
         :}
         | prefix_expr:e {:
-          if(e.getValue() == Double.POSITIVE_INFINITY | e.getValue() == Double.NEGATIVE_INFINITY) {
+          if(e.getValue() == null) {
             System.out.println(": Error divided by zero");
           } else {
             System.out.println("= " + e.getValue()); 
@@ -120,7 +121,7 @@ program ::= infix_expr:e {:
           System.out.println("Postfix: " + e.getPosExp()); 
         :}
         | postfix_expr:e {: 
-          if(e.getValue() == Double.POSITIVE_INFINITY | e.getValue() == Double.NEGATIVE_INFINITY) {
+          if(e.getValue() == null) {
             System.out.println(": Error divided by zero");
           } else {
             System.out.println("= " + e.getValue()); 
@@ -132,13 +133,13 @@ program ::= infix_expr:e {:
 // Infix calculator
 infix_expr    ::= infix_expr:e PLUS infix_term:t
                 {: Token token = new Token();
-                   token.setValue(e.getValue() + t.getValue());
+                   token.setValue(e.getValue().add(t.getValue()));
                    token.setPrefExp("+ " + e.getPrefExp() + " " + t.getPrefExp());
                    token.setPosExp(e.getPosExp() + " " + t.getPosExp() + " +");
                     RESULT = token; :}
             | infix_expr:e MINUS infix_term:t
                 {: Token token = new Token();
-                   token.setValue(e.getValue() - t.getValue());
+                   token.setValue(e.getValue().subtract(t.getValue()));
                    token.setPrefExp("- " + e.getPrefExp() + " " + t.getPrefExp());
                    token.setPosExp(e.getPosExp() + " " + t.getPosExp() + " -");
                     RESULT = token; :}
@@ -147,13 +148,17 @@ infix_expr    ::= infix_expr:e PLUS infix_term:t
 
 infix_term    ::= infix_term:t TIMES infix_factor:f
                 {: Token token = new Token();
-                   token.setValue(t.getValue() * f.getValue());
+                   token.setValue(t.getValue().multiply(f.getValue()));
                    token.setPrefExp("* " + t.getPrefExp() + " " + f.getPrefExp());
                    token.setPosExp(t.getPosExp() + " " + f.getPosExp() + " *");
                     RESULT = token; :}
             | infix_term:t DIVIDE infix_factor:f
                 {: Token token = new Token();
-                   token.setValue(t.getValue() / f.getValue());
+                    if (f.getValue().compareTo(BigDecimal.ZERO) == 0) {
+                      token.setValue(null);
+                    } else {
+                     token.setValue(t.getValue().divide(f.getValue()));
+                    }
                    token.setPrefExp("/ " + t.getPrefExp() + " " + f.getPrefExp());
                    token.setPosExp(t.getPosExp() + " " + f.getPosExp() + " /");
                     RESULT = token; :}
@@ -172,25 +177,25 @@ infix_factor    ::= LPAREN infix_expr:e RPAREN
 // Prefix calculator
 prefix_expr    ::= PLUS prefix_factor:f prefix_factor:f2
                 {: Token token = new Token();
-                   token.setValue(f.getValue() + f2.getValue());
+                   token.setValue(f.getValue().add(f2.getValue()));
                    token.setInfExp("(" + f.getInfExp() + " + " + f2.getInfExp() + ")");
                    token.setPosExp(f.getPosExp() + " " + f2.getPosExp() + " +");
                     RESULT = token; :}
             | MINUS prefix_factor:f prefix_factor:f2
                 {: Token token = new Token();
-                   token.setValue(f.getValue() - f2.getValue());
+                   token.setValue(f.getValue().subtract(f2.getValue()));
                    token.setInfExp(f.getInfExp() + " - " + f2.getInfExp());
                    token.setPosExp(f.getPosExp() + " " + f2.getPosExp() + " -");
                     RESULT = token; :}
             | TIMES prefix_factor:f prefix_factor:f2
                 {: Token token = new Token();
-                   token.setValue(f.getValue() * f2.getValue());
+                   token.setValue(f.getValue().multiply(f2.getValue()));
                    token.setInfExp(f.getInfExp() + " * " + f2.getInfExp());
                    token.setPosExp(f.getPosExp() + " " + f2.getPosExp() + " *");
                     RESULT = token; :}
             | DIVIDE prefix_factor:f prefix_factor:f2
                 {: Token token = new Token();
-                   token.setValue(f.getValue() / f2.getValue());
+                   token.setValue(f.getValue().divide(f2.getValue()));
                    token.setInfExp(f.getInfExp() + " / " + f2.getInfExp());
                    token.setPosExp(f.getPosExp() + " " + f2.getPosExp() + " /");
                     RESULT = token; :};
@@ -207,25 +212,25 @@ prefix_factor    ::= prefix_expr:e
 // Postfix calculator
 postfix_expr    ::= postfix_factor:f postfix_factor:f2 PLUS
                 {: Token token = new Token();
-                   token.setValue(f.getValue() + f2.getValue());
+                   token.setValue(f.getValue().add(f2.getValue()));
                    token.setInfExp("(" + f.getInfExp() + " + " + f2.getInfExp() + ")");
                    token.setPrefExp("+ " + f.getPrefExp() + " " + f2.getPrefExp());
                     RESULT = token; :}
             | postfix_factor:f postfix_factor:f2 MINUS
                 {: Token token = new Token();
-                   token.setValue(f.getValue() - f2.getValue());
+                   token.setValue(f.getValue().subtract(f2.getValue()));
                    token.setInfExp(f.getInfExp() + " - " + f2.getInfExp());
                    token.setPrefExp("- " + f.getPrefExp() + " " + f2.getPrefExp());
                     RESULT = token; :}
             | postfix_factor:f postfix_factor:f2 TIMES
                 {: Token token = new Token();
-                   token.setValue(f.getValue() * f2.getValue());
+                   token.setValue(f.getValue().multiply(f2.getValue()));
                    token.setInfExp(f.getInfExp() + " * " + f2.getInfExp());
                    token.setPrefExp("* " + f.getPrefExp() + " " + f2.getPrefExp());
                     RESULT = token; :}
             | postfix_factor:f postfix_factor:f2 DIVIDE
                 {: Token token = new Token();
-                   token.setValue(f.getValue() / f2.getValue());
+                   token.setValue(f.getValue().divide(f2.getValue()));
                    token.setInfExp(f.getInfExp() + " / " + f2.getInfExp());
                    token.setPrefExp("/ " + f.getPrefExp() + " " + f2.getPrefExp());
                     RESULT = token; :};

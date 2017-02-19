@@ -1,20 +1,21 @@
 //package src;
+import java.math.BigDecimal;
 
 /**
  *
  * @author mrteera
  */
 public class Token {
-    private Double value;
+    private BigDecimal value;
     private String prefExp;
     private String posExp;
     private String infExp;
 
-    public Double getValue() {
+    public BigDecimal getValue() {
         return value;
     }
 
-    public void setValue(Double value) {
+    public void setValue(BigDecimal value) {
         this.value = value;
     }
 

@@ -5,6 +5,7 @@
 /* --------------------------Usercode Section------------------------ */
    
 import java_cup.runtime.*;
+import java.math.BigDecimal;
       
 %%
    
@@ -107,7 +108,7 @@ num = {dec_int_lit}("."[0-9]+)?
                          return symbol(sym.NUMBER, new Integer(yytext())); }*/
 
     {num}      { System.out.print(yytext()+' ');
-               return symbol(sym.NUMBER, new Double(yytext())); }
+               return symbol(sym.NUMBER, new BigDecimal(yytext())); }
    
     /* Don't do anything if whitespace is found */
     {WhiteSpace}       { /* just skip what was found, do nothing */ }   
