@@ -77,8 +77,9 @@ terminal Double        NUMBER;
    non terminals that have an integer value are listed.  An object
    value means that it can be any type, it isn't set to a specific
    type.  So it could be an Integer or a String or whatever. */
-non terminal            P;
-non terminal Token    E, F, T;
+non terminal            program;
+non terminal Token      infix, prefix, postfix;
+non terminal Token      infix_expr, infix_factor, infix_term;
    
 
 /* -------------Precedence and Associatively of Terminals Section----------- */
@@ -99,41 +100,43 @@ non terminal Token    E, F, T;
 
 /* ----------------------------Grammar Section-------------------- */
 
-P ::= E:e {: System.out.println("= " + e.getValue());
-              System.out.println("Prefix: " + e.getPrefExp());
-                System.out.println("Postfix: " + e.getPosExp()); :};
+program ::= infix:i {: System.out.println("= " + i.getValue());
+              System.out.println("Prefix: " + i.getPrefExp());
+                System.out.println("Postfix: " + i.getPosExp()); :};
+
+infix ::= infix_expr:e {: RESULT = e; :};
    
-E    ::= E:e PLUS T:t
+infix_expr    ::= infix_expr:e PLUS infix_term:t
                 {: Token token = new Token();
                    token.setValue(e.getValue() + t.getValue());
                    token.setPrefExp("+ " + e.getPrefExp() + " " + t.getPrefExp());
                    token.setPosExp(e.getPosExp() + " " + t.getPosExp() + " +");
                     RESULT = token; :}
-            | E:e MINUS T:t
+            | infix_expr:e MINUS infix_term:t
                 {: Token token = new Token();
                    token.setValue(e.getValue() - t.getValue());
                    token.setPrefExp("- " + e.getPrefExp() + " " + t.getPrefExp());
                    token.setPosExp(e.getPosExp() + " " + t.getPosExp() + " -");
                     RESULT = token; :}
-            | T:t
+            | infix_term:t
                 {: RESULT = t; :};
 
-T    ::= T:t TIMES F:f
+infix_term    ::= infix_term:t TIMES infix_factor:f
                 {: Token token = new Token();
                    token.setValue(t.getValue() * f.getValue());
                    token.setPrefExp("* " + t.getPrefExp() + " " + f.getPrefExp());
                    token.setPosExp(t.getPosExp() + " " + f.getPosExp() + " *");
                     RESULT = token; :}
-            | T:t DIVIDE F:f
+            | infix_term:t DIVIDE infix_factor:f
                 {: Token token = new Token();
                    token.setValue(t.getValue() * f.getValue());
                    token.setPrefExp("/ " + t.getPrefExp() + " " + f.getPrefExp());
                    token.setPosExp(t.getPosExp() + " " + f.getPosExp() + " /");
                     RESULT = token; :}
-            | F:f
+            | infix_factor:f
                 {: RESULT = f; :};
 
-F    ::= LPAREN E:e RPAREN
+infix_factor    ::= LPAREN infix_expr:e RPAREN
                 {: RESULT = e; :}
             | NUMBER:num
                 {: Token token = new Token();
