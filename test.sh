@@ -28,6 +28,13 @@ cp test.txt.zero test.txt && \
 cp output.good.zero output.good && \
 make all && \
 cp output.txt output.txt.zero && \
+# Test unary minus
+make clean && \
+rm -f test.txt output.good && \
+cp test.txt.uminus test.txt && \
+cp output.good.uminus output.good && \
+make all && \
+cp output.txt output.txt.zero && \
 echo "======== Infix ========"
 cat output.txt.infix
 echo "======== Infix ========"
@@ -40,4 +47,7 @@ echo "======== Postfix ========"
 echo "======== Divided by zero ========"
 cat output.txt.zero
 echo "======== Divided by zero ========"
+echo "======== Unary minus ========"
+cat output.txt.uminus
+echo "======== Unary minus ========"
 rm -f output.txt.*
