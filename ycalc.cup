@@ -103,9 +103,11 @@ non terminal Token      postfix_expr, postfix_factor;
 /* ----------------------------Grammar Section-------------------- */
 
 program ::= infix_expr:e {: 
+          // e value will be null if the divisor is zero
           if(e.getValue() == null) {
             System.out.println(": Error divided by zero");
           } else {
+          // Return calculation result
             System.out.println("= " + e.getValue());
           }
           System.out.println("Prefix: " + e.getPrefExp());
@@ -117,6 +119,8 @@ program ::= infix_expr:e {:
           } else {
             System.out.println("= " + e.getValue()); 
           }
+          // Remove outer parentheses
+          // to get the correct translation
           String infix = e.getInfExp();
           String firstLetter = infix.substring(0, 1);
           String lastLetter = infix.substring(infix.length() - 1);
@@ -145,12 +149,16 @@ program ::= infix_expr:e {:
 // Infix calculator
 infix_expr    ::= infix_expr:e PLUS infix_term:t
                 {: Token token = new Token();
+                   // Use add() from BigDecimal for plus operation
                    token.setValue(e.getValue().add(t.getValue()));
+                   // Convert infix to prefix
                    token.setPrefExp("+ " + e.getPrefExp() + " " + t.getPrefExp());
+                   // Convert infix to postfix
                    token.setPosExp(e.getPosExp() + " " + t.getPosExp() + " +");
                     RESULT = token; :}
             | infix_expr:e MINUS infix_term:t
                 {: Token token = new Token();
+                   // Use substract() from BigDecimal for minus operation
                    token.setValue(e.getValue().subtract(t.getValue()));
                    token.setPrefExp("- " + e.getPrefExp() + " " + t.getPrefExp());
                    token.setPosExp(e.getPosExp() + " " + t.getPosExp() + " -");
@@ -160,15 +168,18 @@ infix_expr    ::= infix_expr:e PLUS infix_term:t
 
 infix_term    ::= infix_term:t TIMES infix_factor:f
                 {: Token token = new Token();
+                   // Use multiply() from BigDecimal for multiply operation
                    token.setValue(t.getValue().multiply(f.getValue()));
                    token.setPrefExp("* " + t.getPrefExp() + " " + f.getPrefExp());
                    token.setPosExp(t.getPosExp() + " " + f.getPosExp() + " *");
                     RESULT = token; :}
             | infix_term:t DIVIDE infix_factor:f
                 {: Token token = new Token();
+                    // Check divided by zero
                     if (f.getValue().compareTo(BigDecimal.ZERO) == 0) {
                       token.setValue(null);
                     } else {
+                     // Use divide() from  BigDecimal for divide operation
                      token.setValue(t.getValue().divide(f.getValue()));
                     }
                    token.setPrefExp("/ " + t.getPrefExp() + " " + f.getPrefExp());
@@ -182,6 +193,7 @@ infix_factor    ::= LPAREN infix_expr:e RPAREN
             | NUMBER:num
                 {: Token token = new Token();
                    token.setValue(num);
+                   // Convert num to string for translation
                    token.setPrefExp(num.toString());
                     token.setPosExp(num.toString());
                     RESULT = token; :};
@@ -190,6 +202,8 @@ infix_factor    ::= LPAREN infix_expr:e RPAREN
 prefix_expr    ::= PLUS prefix_factor:f prefix_factor:f2
                 {: Token token = new Token();
                    token.setValue(f.getValue().add(f2.getValue()));
+                   // Add parentheses everywhere but the outer one
+                   // will be removed later
                    token.setInfExp("(" + f.getInfExp() + " + " + f2.getInfExp() + ")");
                    token.setPosExp(f.getPosExp() + " " + f2.getPosExp() + " +");
                     RESULT = token; :}
@@ -207,7 +221,11 @@ prefix_expr    ::= PLUS prefix_factor:f prefix_factor:f2
                     RESULT = token; :}
             | DIVIDE prefix_factor:f prefix_factor:f2
                 {: Token token = new Token();
-                   token.setValue(f.getValue().divide(f2.getValue()));
+                    if (f2.getValue().compareTo(BigDecimal.ZERO) == 0) {
+                      token.setValue(null);
+                    } else {
+                     token.setValue(f.getValue().divide(f2.getValue()));
+                    }
                    token.setInfExp(f.getInfExp() + " / " + f2.getInfExp());
                    token.setPosExp(f.getPosExp() + " " + f2.getPosExp() + " /");
                     RESULT = token; :};
@@ -242,7 +260,11 @@ postfix_expr    ::= postfix_factor:f postfix_factor:f2 PLUS
                     RESULT = token; :}
             | postfix_factor:f postfix_factor:f2 DIVIDE
                 {: Token token = new Token();
-                   token.setValue(f.getValue().divide(f2.getValue()));
+                   if (f2.getValue().compareTo(BigDecimal.ZERO) == 0) {
+                     token.setValue(null);
+                   } else {
+                    token.setValue(f.getValue().divide(f2.getValue()));
+                   }
                    token.setInfExp(f.getInfExp() + " / " + f2.getInfExp());
                    token.setPrefExp("/ " + f.getPrefExp() + " " + f2.getPrefExp());
                     RESULT = token; :};

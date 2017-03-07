@@ -34,7 +34,7 @@ rm -f test.txt output.good && \
 cp test.txt.uminus test.txt && \
 cp output.good.uminus output.good && \
 make all && \
-cp output.txt output.txt.zero && \
+cp output.txt output.txt.uminus && \
 echo "======== Infix ========"
 cat output.txt.infix
 echo "======== Infix ========"
